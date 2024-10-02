@@ -6,7 +6,7 @@ import route from './src/routes/index.js';
 
 const urlencoded = express.urlencoded;
 const app = express();
-dbConnect();
+// dbConnect();
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());

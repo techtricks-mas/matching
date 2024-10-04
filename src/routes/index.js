@@ -112,7 +112,6 @@ route.patch("/status/:id", async (req, res) => {
 
 route.get("/deleteAll", async (req, res) => {
    try {
-       // Find the document by id and update its status
        const updatedDocument = await MatchHistory.deleteMany();
 
        // Send the updated document as a response

@@ -8,16 +8,6 @@ const route = express.Router();
 route.get("/", (req, res) => {
    res.send("Match Transactions APIs");
 });
-// route.post("/match", (req, res) => {
-//    const { orders, transactions } = req.body;
-
-//    const matchedRecords = orders.map((order) => {
-//       const matchedTransactions = transactions.filter((txn) => Match(order, txn));
-//       return [order, ...matchedTransactions];
-//    });
-
-//    res.json(matchedRecords);
-// });
 
 route.post("/match", async (req, res) => {
    const { orders, transactions } = req.body;
@@ -67,8 +57,10 @@ route.post("/match", async (req, res) => {
          // Determine the best matched transactions based on lowest distance scores
          const bestMatches = potentialMatches
             .filter((match) => {
-               const totalDistance = match.distances.nameDistance + match.distances.orderIdDistance + match.distances.productDistance;
-               return totalDistance <= 13; // Adjust this threshold based on acceptable combined distances
+               if (match.distances.nameDistance <= 5) {
+                  const totalDistance = match.distances.nameDistance + match.distances.orderIdDistance + match.distances.productDistance;
+                  return totalDistance <= 13; // Adjust this threshold based on acceptable combined distances
+               }
             })
             .map((match) => match.transaction);
             if (bestMatches.length > 0) {
@@ -113,6 +105,18 @@ route.patch("/status/:id", async (req, res) => {
 
        // Send the updated document as a response
        res.json({ message: "Status updated successfully", data: updatedDocument });
+   } catch (error) {
+       res.status(500).json({ message: "Server error" });
+   }
+});
+
+route.get("/deleteAll", async (req, res) => {
+   try {
+       // Find the document by id and update its status
+       const updatedDocument = await MatchHistory.deleteMany();
+
+       // Send the updated document as a response
+       res.json({ message: "Data Deleted successfully", data: updatedDocument });
    } catch (error) {
        res.status(500).json({ message: "Server error" });
    }
